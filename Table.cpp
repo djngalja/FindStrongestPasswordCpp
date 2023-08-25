@@ -81,7 +81,7 @@ void Table::PrintBorder(char c)
     std::cout << "+" << std::endl;
 }
 
-Table::Table(std::string& str)
+Table::Table(const std::string& str)
 {
     SplitStringIntoPasswords(str);
     MakeLongestWordVector();

@@ -29,7 +29,7 @@ class Table
     void PrintBorder(char c = '=');
 
 public:
-    Table(std::string& str);
+    Table(const std::string& str);
     void PrintTable();
 };
 
