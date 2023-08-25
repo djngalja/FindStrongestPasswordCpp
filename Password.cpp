@@ -61,7 +61,7 @@ void Password::FindCommonPatterns()
                 }
                 if (temp_string.size() == pattern.size())
                 {
-                    common_patterns += temp_string + ", ";
+                    set_patterns.insert(temp_string);
                     count_patterns++;
                     i += pattern.size()-1;
                 }
@@ -88,7 +88,7 @@ void Password::FindRepeatingChars()
         }
         if (temp_string.size() > 3)
         {
-            common_patterns += temp_string + ", ";
+            set_patterns.insert(temp_string);
             count_patterns++;
         }
         i++;
@@ -113,7 +113,7 @@ void Password::FindAbcPatterns(bool backwards)
         }
         if (temp_string.size() > 3)
         {
-            common_patterns += temp_string + ", ";
+            set_patterns.insert(temp_string);
             count_patterns++;
         }
         i++;
@@ -121,14 +121,12 @@ void Password::FindAbcPatterns(bool backwards)
 }
 
 
-Password::Password(const std::string& word)
+Password::Password(const std::string& word) : password(word), count_patterns(0)
 {
-    password = word;
     digits = ContainsDigits();
     lower_case = ContainsLowerCase();
     upper_case = ContainsUpperCase();
     count_special_chars = CountSpecialChars();
-    count_patterns = 0;
     if (password.size() > 3)
     {
         FindCommonPatterns();
@@ -136,7 +134,8 @@ Password::Password(const std::string& word)
         FindAbcPatterns();
         FindAbcPatterns(true);
     }
-    if (common_patterns.size()!=0)
-        common_patterns.erase(common_patterns.size()-2, common_patterns.size());
+    for(std::string str: set_patterns) string_patterns += str + ", ";
+    if (string_patterns.size()!=0)
+        string_patterns.erase(string_patterns.size()-2, string_patterns.size());
     score = digits + lower_case + upper_case + count_special_chars + password.size()/8 - count_patterns;
 }

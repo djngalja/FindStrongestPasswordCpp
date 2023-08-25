@@ -9,13 +9,19 @@ void Table::SplitStringIntoPasswords(const std::string& str)
             temp_string.push_back(c);
         else
         {
-            Password temp_obj(temp_string);
-            passwords.push_back(temp_obj);
-            temp_string.clear();
+            if (!temp_string.empty())
+            {
+                Password temp_obj(temp_string);
+                passwords.push_back(temp_obj);
+                temp_string.clear();
+            }
         }
     }
-    Password temp_obj(temp_string);
-    passwords.push_back(temp_obj);
+    if (!temp_string.empty())
+    {
+        Password temp_obj(temp_string);
+        passwords.push_back(temp_obj);
+    }
 }
 
 void Table::MakeLongestWordVector()
@@ -27,8 +33,8 @@ void Table::MakeLongestWordVector()
     {
         if (longest_password.size() < password.password.size())
             longest_password = password.password;
-        if (longest_pattern.size() < password.common_patterns.size())
-            longest_pattern = password.common_patterns;
+        if (longest_pattern.size() < password.string_patterns.size())
+            longest_pattern = password.string_patterns;
     }
     longest_words[1] = longest_password;
     longest_words[7] = longest_pattern;
@@ -75,7 +81,7 @@ void Table::PrintBorder(char c)
     std::cout << "+" << std::endl;
 }
 
-Table::Table(const std::string& str)
+Table::Table(std::string& str)
 {
     SplitStringIntoPasswords(str);
     MakeLongestWordVector();
@@ -97,7 +103,7 @@ void Table::PrintTable()
         << MakeCell(passwords[i].digits,longest_words[4], true)
         << MakeCell(passwords[i].lower_case, longest_words[5], true)
         << MakeCell(passwords[i].upper_case, longest_words[6], true)
-        << MakeCell(passwords[i].common_patterns, longest_words[7])
+        << MakeCell(passwords[i].string_patterns, longest_words[7])
         << std::endl;
         if (i != passwords.size()-1)
             PrintBorder('-');

@@ -3,10 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 class Password
 {
     int count_patterns;
+    std::set<std::string> set_patterns;
 
     int ContainsDigits();
     int ContainsUpperCase();
@@ -23,7 +25,7 @@ public:
     int digits;
     int lower_case;
     int upper_case;
-    std::string common_patterns;
+    std::string string_patterns;
 
     Password(const std::string& word);
 };

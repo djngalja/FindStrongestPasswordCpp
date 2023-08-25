@@ -4,8 +4,6 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
-#include <string>
-#include <vector>
 #include "Password.h"
 
 class Table
@@ -31,7 +29,7 @@ class Table
     void PrintBorder(char c = '=');
 
 public:
-    Table(const std::string& str);
+    Table(std::string& str);
     void PrintTable();
 };
 

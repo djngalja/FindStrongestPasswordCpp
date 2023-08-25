@@ -1,4 +1,3 @@
-#include "Password.h"
 #include "Table.h"
 
 int main()
@@ -7,8 +6,8 @@ int main()
     std::string input;
     std::getline(std::cin, input);
 
-    Table table(input);
-    table.PrintTable();
+    Table comprison_table(input);
+    comprison_table.PrintTable();
 
     system("pause");
     return 0;
