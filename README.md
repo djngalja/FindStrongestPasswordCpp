@@ -51,18 +51,18 @@ Prints out a comparison table with the following colums:
 
 ### Common pattern search algorithms
 The application relies on 4 algorithms in order to detect the following common password patterns:
-* Sequences of any repeating characters.
-* Sequences of letters in (reverse) alphabetical order.
-* Arithmetic sequences with common differences of 1 or -1.
+* Sequences of any repeating characters
+* Sequences of letters in (reverse) alphabetical order
+* Arithmetic sequences with common differences of 1 or -1
 * Common passwords, such as "iloveyou", "password", etc.
   
 Only sequences longer than 3 characters are taken into account. The search algorithms are not case-sensitive.
 ## Sample input and output
 ### Example 1
-**Input:** *ADmINadmin PA$$w0rD1234 QWERTY007 password*<br />
-**Output:**
+**Input:** `ADmINadmin PA$$w0rD1234 QWERTY007 password`<br />
+**Output:**<br />
 ![Comparison table 1](/readme_img/table1.jpg)
 ### Example 2
-**Input:** *AbcdEf76543           3456ZYxW*<br />
-**Output:**
+**Input:** `AbcdEf76543        3456ZYxW   `<br />
+**Output:**<br />
 ![Comparison table 1](/readme_img/table2.jpg)
