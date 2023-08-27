@@ -102,10 +102,10 @@ void Password::FindAbcPatterns(bool backwards)
     while (i < password.size()-3)
     {
         std::string temp_string;
-        if ((password[i]+d == password[i+1]) && isalnum(password[i]))
+        if ((tolower(password[i]+d) == tolower(password[i+1])) && isalnum(password[i]))
         {
             temp_string += password[i];
-            while ((i<password.size()-1) && (password[i]+d == password[i+1]) && isalnum(password[i]))
+            while ((i<password.size()-1) && (tolower(password[i]+d) == tolower(password[i+1])) && isalnum(password[i]))
             {
                 temp_string += password[i+1];
                 i++;
