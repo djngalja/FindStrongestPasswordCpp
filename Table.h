@@ -8,7 +8,7 @@
 
 class Table
 {
-    const std::vector<std::string> headers =
+    const std::vector<std::string> m_headers =
     {
         "Score",
         "Password",
@@ -19,8 +19,8 @@ class Table
         "UCase",
         "Patterns"
     };
-    std::vector<std::string> longest_words;
-    std::vector<Password> passwords;
+    std::vector<std::string> m_longest_words;
+    std::vector<Password> m_passwords;
 
     void SplitStringIntoPasswords(const std::string& str);
     void MakeLongestWordVector();

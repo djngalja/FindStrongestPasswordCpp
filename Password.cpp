@@ -2,21 +2,21 @@
 
 int Password::ContainsDigits()
 {
-    for (char c: password)
+    for (char c: m_password)
         if (isdigit(c)) return 1;
     return 0;
 }
 
 int Password::ContainsUpperCase()
 {
-    for (char c: password)
+    for (char c: m_password)
         if (isupper(c)) return 1;
     return 0;
 }
 
 int Password::ContainsLowerCase()
 {
-    for (char c: password)
+    for (char c: m_password)
         if (islower(c)) return 1;
     return 0;
 }
@@ -24,7 +24,7 @@ int Password::ContainsLowerCase()
 int Password::CountSpecialChars()
 {
     int counter = 0;
-    for (char c: password)
+    for (char c: m_password)
         if (!isalnum(c)) counter++;
     return counter;
 }
@@ -49,20 +49,20 @@ void Password::FindCommonPatterns()
     for (std::string pattern: patterns)
     {
         std::size_t i = 0;
-        while (i < password.size())
+        while (i < m_password.size())
         {
             std::string temp_string;
-            if (tolower(password[i]) == pattern[0] && password.size() >= (i+pattern.size()))
+            if (tolower(m_password[i]) == pattern[0] && m_password.size() >= (i+pattern.size()))
             {
                 for (std::size_t j=0; j<pattern.size(); j++)
                 {
-                    if (tolower(password[i+j]) == pattern[j]) temp_string += password[i+j];
+                    if (tolower(m_password[i+j]) == pattern[j]) temp_string += m_password[i+j];
                     else break;
                 }
                 if (temp_string.size() == pattern.size())
                 {
-                    set_patterns.insert(temp_string);
-                    count_patterns++;
+                    m_pattern_set.insert(temp_string);
+                    m_score--;
                     i += pattern.size()-1;
                 }
             }
@@ -74,22 +74,22 @@ void Password::FindCommonPatterns()
 void Password::FindRepeatingChars()
 {
     std::size_t i = 0;
-    while (i < password.size()-3) //looking for sequences longer than 3 chars
+    while (i < m_password.size()-3) //looking for sequences longer than 3 chars
     {
         std::string temp_string;
-        if (password[i] == password[i+1])
+        if (m_password[i] == m_password[i+1])
         {
-            temp_string += password[i];
-            while ((i < (password.size()-1)) && (password[i] == password[i+1]))
+            temp_string += m_password[i];
+            while ((i < (m_password.size()-1)) && (m_password[i] == m_password[i+1]))
             {
-                temp_string += password[i+1];
+                temp_string += m_password[i+1];
                 i++;
             }
         }
         if (temp_string.size() > 3)
         {
-            set_patterns.insert(temp_string);
-            count_patterns++;
+            m_pattern_set.insert(temp_string);
+            m_score--;
         }
         i++;
     }
@@ -99,43 +99,78 @@ void Password::FindAbcPatterns(bool backwards)
 {
     int d = backwards? -1 : 1; //common difference
     std::size_t i = 0;
-    while (i < password.size()-3)
+    while (i < m_password.size()-3)
     {
         std::string temp_string;
-        if ((tolower(password[i]+d) == tolower(password[i+1])) && isalnum(password[i]))
+        if ((tolower(m_password[i]+d) == tolower(m_password[i+1])) && isalnum(m_password[i]))
         {
-            temp_string += password[i];
-            while ((i<password.size()-1) && (tolower(password[i]+d) == tolower(password[i+1])) && isalnum(password[i]))
+            temp_string += m_password[i];
+            while ((i<m_password.size()-1) && (tolower(m_password[i]+d) == tolower(m_password[i+1])) && isalnum(m_password[i]))
             {
-                temp_string += password[i+1];
+                temp_string += m_password[i+1];
                 i++;
             }
         }
         if (temp_string.size() > 3)
         {
-            set_patterns.insert(temp_string);
-            count_patterns++;
+            m_pattern_set.insert(temp_string);
+            m_score--;
         }
         i++;
     }
 }
 
 
-Password::Password(const std::string& word) : password(word), count_patterns(0)
+Password::Password(const std::string& password) : m_password(password), m_score(0)
 {
-    digits = ContainsDigits();
-    lower_case = ContainsLowerCase();
-    upper_case = ContainsUpperCase();
-    count_special_chars = CountSpecialChars();
-    if (password.size() > 3)
+    m_digits = ContainsDigits();
+    m_lower_case = ContainsLowerCase();
+    m_upper_case = ContainsUpperCase();
+    m_count_special_chars = CountSpecialChars();
+    if (m_password.size() > 3)
     {
         FindCommonPatterns();
         FindRepeatingChars();
         FindAbcPatterns();
         FindAbcPatterns(true);
     }
-    for(std::string str: set_patterns) string_patterns += str + ", ";
-    if (string_patterns.size()!=0)
-        string_patterns.erase(string_patterns.size()-2, string_patterns.size());
-    score = digits + lower_case + upper_case + count_special_chars + password.size()/8 - count_patterns;
+    for(std::string str: m_pattern_set) m_pattern_string += str + ", ";
+    if (m_pattern_string.size()!=0)
+        m_pattern_string.erase(m_pattern_string.size()-2, m_pattern_string.size());
+    m_score += m_digits + m_lower_case + m_upper_case + m_count_special_chars + m_password.size()/8;
+}
+
+std::string Password::getPassword()
+{
+    return m_password;
+}
+
+int Password::getCountSpecialChars()
+{
+    return m_count_special_chars;
+}
+
+int Password::getDigits()
+{
+    return m_digits;
+}
+
+int Password::getLowerCase()
+{
+    return m_lower_case;
+}
+
+int Password::getUpperCase()
+{
+    return m_upper_case;
+}
+
+std::string Password::getPatternString()
+{
+    return m_pattern_string;
+}
+
+int Password::getScore()
+{
+    return m_score;
 }

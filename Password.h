@@ -7,8 +7,14 @@
 
 class Password
 {
-    int count_patterns;
-    std::set<std::string> set_patterns;
+    std::string m_password;
+    int m_count_special_chars;
+    int m_digits;
+    int m_lower_case;
+    int m_upper_case;
+    std::set<std::string> m_pattern_set;
+    std::string m_pattern_string;
+    int m_score;
 
     int ContainsDigits();
     int ContainsUpperCase();
@@ -19,15 +25,15 @@ class Password
     void FindAbcPatterns(bool backwards = false);
 
 public:
-    int score;
-    std::string password;
-    int count_special_chars;
-    int digits;
-    int lower_case;
-    int upper_case;
-    std::string string_patterns;
-
     Password(const std::string& word);
+
+    std::string getPassword();
+    int getCountSpecialChars();
+    int getDigits();
+    int getLowerCase();
+    int getUpperCase();
+    std::string getPatternString();
+    int getScore();
 };
 
 #endif // PASSWORD_H

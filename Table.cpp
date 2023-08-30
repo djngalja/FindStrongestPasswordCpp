@@ -12,7 +12,7 @@ void Table::SplitStringIntoPasswords(const std::string& str)
             if (!temp_string.empty())
             {
                 Password temp_obj(temp_string);
-                passwords.push_back(temp_obj);
+                m_passwords.push_back(temp_obj);
                 temp_string.clear();
             }
         }
@@ -20,24 +20,24 @@ void Table::SplitStringIntoPasswords(const std::string& str)
     if (!temp_string.empty())
     {
         Password temp_obj(temp_string);
-        passwords.push_back(temp_obj);
+        m_passwords.push_back(temp_obj);
     }
 }
 
 void Table::MakeLongestWordVector()
 {
-    longest_words = headers;
-    std::string longest_password(headers[1]);
-    std::string longest_pattern(headers[7]);
-    for (Password password: passwords)
+    m_longest_words = m_headers;
+    std::string longest_password(m_headers[1]);
+    std::string longest_pattern(m_headers[7]);
+    for (Password password: m_passwords)
     {
-        if (longest_password.size() < password.password.size())
-            longest_password = password.password;
-        if (longest_pattern.size() < password.string_patterns.size())
-            longest_pattern = password.string_patterns;
+        if (longest_password.size() < password.getPassword().size())
+            longest_password = password.getPassword();
+        if (longest_pattern.size() < password.getPatternString().size())
+            longest_pattern = password.getPatternString();
     }
-    longest_words[1] = longest_password;
-    longest_words[7] = longest_pattern;
+    m_longest_words[1] = longest_password;
+    m_longest_words[7] = longest_pattern;
 }
 
 template<typename T>
@@ -59,12 +59,12 @@ std::string Table::MakeCell(T current_word, const std::string& longest_word, boo
 void Table::PrintHeaders()
 {
     std::cout << " | ";
-    for (std::size_t i=0; i<headers.size(); i++)
+    for (std::size_t i=0; i<m_headers.size(); i++)
     {
         if (i==1 || i==7)
-            std::cout << MakeCell(headers[i], longest_words[i]);
+            std::cout << MakeCell(m_headers[i], m_longest_words[i]);
         else
-            std::cout << headers[i] << " | ";
+            std::cout << m_headers[i] << " | ";
     }
     std::cout << std::endl;
 }
@@ -72,7 +72,7 @@ void Table::PrintHeaders()
 void Table::PrintBorder(char c)
 {
     std::cout << " ";
-    for (std::string word: longest_words)
+    for (std::string word: m_longest_words)
     {
         std::string border("+");
         border.resize(word.size()+3, c);
@@ -89,23 +89,23 @@ Table::Table(const std::string& str)
 
 void Table::PrintTable()
 {
-    std::sort(passwords.begin(), passwords.end(), [](Password a, Password b){return a.score > b.score;});
+    std::sort(m_passwords.begin(), m_passwords.end(), [](Password a, Password b){return a.getScore() > b.getScore();});
     PrintBorder();
     PrintHeaders();
     PrintBorder();
-    for (std::size_t i=0; i<passwords.size(); i++)
+    for (std::size_t i=0; i<m_passwords.size(); i++)
     {
         std::cout << " | "
-        << MakeCell(passwords[i].score, longest_words[0])
-        << MakeCell(passwords[i].password, longest_words[1])
-        << MakeCell(passwords[i].password.size(), longest_words[2])
-        << MakeCell(passwords[i].count_special_chars, longest_words[3])
-        << MakeCell(passwords[i].digits,longest_words[4], true)
-        << MakeCell(passwords[i].lower_case, longest_words[5], true)
-        << MakeCell(passwords[i].upper_case, longest_words[6], true)
-        << MakeCell(passwords[i].string_patterns, longest_words[7])
+        << MakeCell(m_passwords[i].getScore(), m_longest_words[0])
+        << MakeCell(m_passwords[i].getPassword(), m_longest_words[1])
+        << MakeCell(m_passwords[i].getPassword().size(), m_longest_words[2])
+        << MakeCell(m_passwords[i].getCountSpecialChars(), m_longest_words[3])
+        << MakeCell(m_passwords[i].getDigits(), m_longest_words[4], true)
+        << MakeCell(m_passwords[i].getLowerCase(), m_longest_words[5], true)
+        << MakeCell(m_passwords[i].getUpperCase(), m_longest_words[6], true)
+        << MakeCell(m_passwords[i].getPatternString(), m_longest_words[7])
         << std::endl;
-        if (i != passwords.size()-1)
+        if (i != m_passwords.size()-1)
             PrintBorder('-');
     }
     PrintBorder();
