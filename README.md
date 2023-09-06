@@ -50,8 +50,9 @@ Prints out a comparison table with the following colums:
 </table>
 
 ### Common pattern search algorithms
-The application relies on 4 algorithms in order to detect the following common password patterns:
+The application relies on 5 algorithms in order to detect the following common password patterns:
 * Sequences of any repeating characters
+* Sequences of repeating pairs of characters
 * Sequences of letters in (reverse) alphabetical order
 * Arithmetic sequences with common differences of 1 or -1
 * Common passwords, such as "iloveyou", "password", etc.
