@@ -22,18 +22,12 @@ class Password
     int CountSpecialChars();
     void FindCommonPatterns();
     void FindRepeatingChars();
+    void FindRepeatingPairs();
     void FindAbcPatterns(bool backwards = false);
 
 public:
     Password(const std::string& word);
-
-    std::string getPassword();
-    int getCountSpecialChars();
-    int getDigits();
-    int getLowerCase();
-    int getUpperCase();
-    std::string getPatternString();
-    int getScore();
+    friend class Table;
 };
 
 #endif // PASSWORD_H

@@ -95,6 +95,31 @@ void Password::FindRepeatingChars()
     }
 }
 
+void Password::FindRepeatingPairs()
+{
+    if (m_password.size()<6) return;
+    for (std::size_t i=0; i<=m_password.size()-6; i++)
+    {
+        std::string temp_string;
+        if (m_password[i]==m_password[i+2] && m_password[i+1]==m_password[i+3] && m_password[i]!=m_password[i+1])
+        {
+            temp_string.push_back(m_password[i]);
+            temp_string.push_back(m_password[i+1]);
+            while (m_password[i]==m_password[i+2] && m_password[i+1]==m_password[i+3] && i<=m_password.size()-3)
+            {
+                temp_string.push_back(m_password[i+2]);
+                temp_string.push_back(m_password[i+3]);
+                i += 2;
+            }
+        }
+        if (temp_string.size()>=6)
+        {
+            m_pattern_set.insert(temp_string);
+            m_score--;
+        }
+    }
+}
+
 void Password::FindAbcPatterns(bool backwards)
 {
     int d = backwards? -1 : 1; //common difference
@@ -131,6 +156,7 @@ Password::Password(const std::string& password) : m_password(password), m_score(
     {
         FindCommonPatterns();
         FindRepeatingChars();
+        FindRepeatingPairs();
         FindAbcPatterns();
         FindAbcPatterns(true);
     }
@@ -138,39 +164,4 @@ Password::Password(const std::string& password) : m_password(password), m_score(
     if (m_pattern_string.size()!=0)
         m_pattern_string.erase(m_pattern_string.size()-2, m_pattern_string.size());
     m_score += m_digits + m_lower_case + m_upper_case + m_count_special_chars + m_password.size()/8;
-}
-
-std::string Password::getPassword()
-{
-    return m_password;
-}
-
-int Password::getCountSpecialChars()
-{
-    return m_count_special_chars;
-}
-
-int Password::getDigits()
-{
-    return m_digits;
-}
-
-int Password::getLowerCase()
-{
-    return m_lower_case;
-}
-
-int Password::getUpperCase()
-{
-    return m_upper_case;
-}
-
-std::string Password::getPatternString()
-{
-    return m_pattern_string;
-}
-
-int Password::getScore()
-{
-    return m_score;
 }
