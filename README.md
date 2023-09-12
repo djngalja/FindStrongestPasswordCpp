@@ -67,3 +67,7 @@ Only sequences longer than 3 characters are taken into account. The search algor
 **Input:** `AbcdEf76543        3456ZYxW   `<br />
 **Output:**<br />
 ![Comparison table 1](/readme_img/table2.jpg)
+### Example 3
+**Input:** `1111PasssworD    hahahaHA678 hi+++++bye 565656StoP____ `<br />
+**Output:**<br />
+![Comparison table 3](/readme_img/table3.jpg)
