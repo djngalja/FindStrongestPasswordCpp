@@ -29,9 +29,10 @@ int Password::CountSpecialChars()
     return counter;
 }
 
-void Password::FindCommonPatterns()
+void Password::FindCommonPatterns() //find such patterns as 'qwErtY', 'ADMIN', etc.
 {
-    const std::vector<std::string> patterns = //find such patterns as 'qwErtY', 'ADMIN', etc.
+    const std::vector<std::string> patterns =
+    //add common (lower case) passwords to this vector
     {
         "123123",
         "123321",
@@ -46,6 +47,12 @@ void Password::FindCommonPatterns()
         "qwerty",
         "welcome"
     };
+    std::string shortest_pattern = patterns[0];
+    for (std::string pattern: patterns)
+        if (pattern.size() < shortest_pattern.size())
+            shortest_pattern = pattern;
+    if (m_password.size() < shortest_pattern.size()) return;
+    //make sure the password is long enough
     for (std::string pattern: patterns)
     {
         if (pattern.size() > m_password.size()) continue;
@@ -63,7 +70,6 @@ void Password::FindCommonPatterns()
                 if (temp_string.size() == pattern.size())
                 {
                     m_pattern_set.insert(temp_string);
-                    m_score--;
                     i += pattern.size()-1;
                 }
             }
@@ -71,32 +77,34 @@ void Password::FindCommonPatterns()
     }
 }
 
-void Password::FindRepeatingChars() //find such patterns as '1111', 'PPPPP', '____', etc.
+void Password::FindRepeatingChars()
+//find such patterns as '1111', 'PPPPP', 'Aaaa', '____', etc.
 {
-    for (std::size_t i=0; i<m_password.size()-3; i++) //for patterns longer than 3 chars
+    if (m_password.size() < 2) return;
+    for (std::size_t i=0; i<=m_password.size()-m_min_pattern_len; i++)
     {
         std::string temp_string;
-        if (m_password[i]==m_password[i+1])
+        if (tolower(m_password[i]) == tolower(m_password[i+1]))
         {
             temp_string.push_back(m_password[i]);
-            while (m_password[i]==m_password[i+1] && i<m_password.size()-1)
+            while (
+                   i < m_password.size()-1
+                   && tolower(m_password[i]) == tolower(m_password[i+1])
+                   )
             {
                 temp_string.push_back(m_password[i+1]);
                 i++;
             }
         }
-        if (temp_string.size()>3)
-        {
+        if (temp_string.size() >= m_min_pattern_len)
             m_pattern_set.insert(temp_string);
-            m_score--;
-        }
     }
 }
 
-void Password::FindRepeatingPairs() //find such patterns as '121212', 'cdcdcd', 'HAHAHAHA', etc.
+void Password::FindRepeatingPairs() //find such patterns as '1212', 'cdcdcd', 'HAHahaha', etc.
 {
-    if (m_password.size()<6) return; //for patterns not shorter than 6 chars
-    for (std::size_t i=0; i<=m_password.size()-6; i++)
+    if (m_password.size() < 4) return;
+    for (std::size_t i=0; i<=m_password.size()-m_min_pattern_len; i++)
     {
         std::string temp_string;
         if (
@@ -108,9 +116,9 @@ void Password::FindRepeatingPairs() //find such patterns as '121212', 'cdcdcd', 
             temp_string.push_back(m_password[i]);
             temp_string.push_back(m_password[i+1]);
             while (
-                   tolower(m_password[i]) == tolower(m_password[i+2])
+                   i <= m_password.size()-3
+                   && tolower(m_password[i]) == tolower(m_password[i+2])
                    && tolower(m_password[i+1]) == tolower(m_password[i+3])
-                   && i <= m_password.size()-3
                    )
             {
                 temp_string.push_back(m_password[i+2]);
@@ -118,44 +126,50 @@ void Password::FindRepeatingPairs() //find such patterns as '121212', 'cdcdcd', 
                 i += 2;
             }
         }
-        if (temp_string.size()>=6)
+        if (temp_string.size() >= m_min_pattern_len)
         {
             m_pattern_set.insert(temp_string);
-            m_score--;
+            i++;
         }
     }
 }
 
-void Password::FindAbcPatterns(bool backwards) //find such patterns as 'abcd', '23456' or 'dcba', '65432' if backwards is 'true'
+void Password::FindAbcPatterns(bool backwards)
+//find such patterns as 'aBcD', '23456' or 'dcba', '65432' if backwards is 'true'
 {
+    if (m_password.size() < 2) return;
     int d = backwards? -1 : 1; //common difference
-    for (std::size_t i=0; i<m_password.size()-3; i++) //for patterns longer than 3 chars
+    for (std::size_t i=0; i<=m_password.size()-m_min_pattern_len; i++)
     {
         std::string temp_string;
-        if ((tolower(m_password[i]+d) == tolower(m_password[i+1])) && isalnum(m_password[i]))
+        if (
+            tolower(m_password[i]+d) == tolower(m_password[i+1])
+            && isalnum(m_password[i])
+            )
         {
             temp_string.push_back(m_password[i]);
-            while ((tolower(m_password[i]+d) == tolower(m_password[i+1])) && i<m_password.size()-1)
+            while (
+                   tolower(m_password[i]+d) == tolower(m_password[i+1])
+                   && i < m_password.size()-1
+                   )
             {
                 temp_string.push_back(m_password[i+1]);
                 i++;
             }
         }
-        if (temp_string.size() > 3)
-        {
+        if (temp_string.size() >= m_min_pattern_len)
             m_pattern_set.insert(temp_string);
-            m_score--;
-        }
     }
 }
 
-Password::Password(const std::string& password) : m_password(password), m_score(0)
+Password::Password(const std::string& password, std::size_t min_pattern_len):
+    m_password(password), m_min_pattern_len(min_pattern_len)
 {
     m_digits = ContainsDigits();
     m_lower_case = ContainsLowerCase();
     m_upper_case = ContainsUpperCase();
     m_count_special_chars = CountSpecialChars();
-    if (m_password.size() > 3)
+    if (m_password.size() >= m_min_pattern_len && m_min_pattern_len >= 2)
     {
         FindCommonPatterns();
         FindRepeatingChars();
@@ -166,5 +180,5 @@ Password::Password(const std::string& password) : m_password(password), m_score(
     for(std::string str: m_pattern_set) m_pattern_string += str + ", ";
     if (m_pattern_string.size()!=0)
         m_pattern_string.erase(m_pattern_string.size()-2, m_pattern_string.size());
-    m_score += m_digits + m_lower_case + m_upper_case + m_count_special_chars + m_password.size()/8;
+    m_score = m_digits + m_lower_case + m_upper_case + m_count_special_chars + m_password.size()/8 - m_pattern_set.size();
 }

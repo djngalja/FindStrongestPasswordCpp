@@ -12,6 +12,7 @@ class Password
     int m_digits;
     int m_lower_case;
     int m_upper_case;
+    std::size_t m_min_pattern_len;
     std::set<std::string> m_pattern_set;
     std::string m_pattern_string;
     int m_score;
@@ -26,7 +27,7 @@ class Password
     void FindAbcPatterns(bool backwards = false);
 
 public:
-    Password(const std::string& word);
+    Password(const std::string& password, std::size_t min_pattern_len = 4);
     friend class Table;
 };
 

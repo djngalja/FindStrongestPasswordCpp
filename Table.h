@@ -24,7 +24,7 @@ class Table
 
     void SplitStringIntoPasswords(const std::string& str);
     void MakeLongestWordVector();
-    template<typename T> std::string MakeCell(T current_word, const std::string& longest_word, bool contains=false);
+    template<typename T> std::string MakeCell(T current_word, const std::string& longest_word, bool contains = false);
     void PrintHeaders();
     void PrintBorder(char c = '=');
 
